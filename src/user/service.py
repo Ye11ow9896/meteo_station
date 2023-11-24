@@ -9,10 +9,13 @@ from src.user import schemas
 class UserService:
     @staticmethod
     async def create_user(user_dto: schemas.RequestCreateUpdateUser) -> schemas.User:
-        async with SqlAlchemyUnitOfWork() as uow:
+        async with (SqlAlchemyUnitOfWork() as uow):
             if await uow.user.get_by_login_or_none(login=user_dto.login):
                 raise LoginAlreadyExist()
-            new_user = await uow.user.create(data=user_dto.model_dump())
+            new_user = schemas.ResponseCreateUpdateUser(
+
+            )
+            await uow.user.create(data=user_dto.model_dump())
             await uow.commit()
         return new_user
 

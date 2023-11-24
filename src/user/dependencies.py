@@ -6,5 +6,5 @@ from src.user.service import UserService
 
 
 def get_user_service():
-    """ Dependency injection for user service"""
+    """ Dependency injection for user service """
     return Annotated[UserService, Depends(UserService)]

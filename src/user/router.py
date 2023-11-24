@@ -3,10 +3,7 @@ from fastapi import APIRouter, status
 from src.user import schemas
 from src.user.dependencies import get_user_service
 
-user_router = APIRouter(
-    prefix='/user',
-    tags=['User']
-)
+user_router = APIRouter(prefix='/user', tags=['User'])
 
 
 @user_router.post(
