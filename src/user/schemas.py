@@ -27,3 +27,7 @@ class ResponseCreateUpdateUser(BaseModel):
     login: str
     create_date: datetime
 
+
+class UserCredentials(BaseModel):
+    login: str
+    password: str
