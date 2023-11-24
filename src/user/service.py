@@ -4,8 +4,12 @@ from typing import Optional
 from config import SALT
 from src.base.uow import SqlAlchemyUnitOfWork
 from src.base.exceptions import NotFoundException
-from src.user.exceptions import LoginAlreadyExistException, BadUserCredentialsException, BadUserLoginExceptions
+from src.user.exceptions import BadUserPasswordException, BadUserLoginExceptions
 from src.user import schemas
+
+
+class BadUserPasswordException:
+    pass
 
 
 class UserService:
@@ -21,7 +25,7 @@ class UserService:
         )
         async with SqlAlchemyUnitOfWork() as uow:
             if await uow.user.get_by_login_or_none(login=user_dto.login):
-                raise LoginAlreadyExistException()
+                raise BadUserLoginExceptions()
             created_user = await uow.user.create(data=new_user)
             await uow.commit()
         return created_user
@@ -50,9 +54,9 @@ class UserService:
         async with SqlAlchemyUnitOfWork() as uow:
             user = await uow.user.get_by_login_or_none(login=user_credentials.login)
         if not user:
-            raise BadUserLoginExceptions
+            raise BadUserLoginExceptions()
         if self.__hashing_password(password=user_credentials.password) != user.password_hash:
-            raise BadUserCredentialsException
+            raise BadUserPasswordException()
         return user
 
     @staticmethod
