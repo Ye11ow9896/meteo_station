@@ -26,8 +26,3 @@ class ResponseCreateUpdateUser(BaseModel):
     surname: Optional[str] = None
     login: str
     create_date: datetime
-
-
-class UserCredentials(BaseModel):
-    login: str
-    password: str
