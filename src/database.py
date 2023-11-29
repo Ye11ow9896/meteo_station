@@ -1,4 +1,4 @@
-from typing import cast
+from typing import cast, AsyncGenerator
 
 from sqlalchemy import Engine
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
@@ -20,6 +20,11 @@ async_session = sessionmaker(
     expire_on_commit=False,
     autocommit=False,
 )
+
+
+#async def session_generator() -> AsyncSession:
+ #   async with async_session() as session:
+#        yield session
 
 
 async def ping_postgres_database():

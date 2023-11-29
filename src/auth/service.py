@@ -6,12 +6,16 @@ from src.auth.jwt import AuthJWT
 from src.base.exceptions import NotFoundException
 from src.base.uow import SqlAlchemyUnitOfWork
 from src.base.utils import UtilsService
+from src.user import schemas as user_schemas
 
 
 class AuthService(UtilsService, AuthJWT):
 
-    async def check_access_to_endpoint(self):
-        """The method protects access to the endpoint. It checks whether there is access to it else return user"""
+    async def check_access_or_raise_401(self) -> user_schemas.User:
+        """
+        The method protects access to the endpoint. It checks whether there is access to it.
+        Raise 401 or return user
+        """
 
         login = self._get_login_from_access_token_or_401()
         async with SqlAlchemyUnitOfWork() as uow:
@@ -35,7 +39,7 @@ class AuthService(UtilsService, AuthJWT):
             self._set_refresh_cookie(login=user.login)
         }
 
-    def refresh(self):
+    def refresh(self) -> Response:
         """Method is refreshing access token and wrapped it to cookie if refresh token is not expired"""
 
         login = self._get_login_from_refresh_token_or_401()
@@ -45,5 +49,3 @@ class AuthService(UtilsService, AuthJWT):
         """Method is deleting all cookies."""
 
         self._delete_cookies()
-
-

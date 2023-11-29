@@ -18,8 +18,19 @@ class UserService(UtilsService):
             if await uow.user.get_by_login_or_none(login=user_dto.login):
                 raise AlreadyExistsException(detail=f'User with login {user_dto.login} already exists!')
             created_user = await uow.user.create(data=user_dto.model_dump())
-            await uow.commit()
         return created_user
+
+
+    async def update_user(
+            self,
+            user_dto: schemas.RequestCreateUpdateUser,
+            current_user: schemas.User
+    ) -> schemas.ResponseCreateUpdateUser:
+        """Method updates user data and return new data user"""
+
+        async with SqlAlchemyUnitOfWork() as uow:
+            updated_user = await uow.user.update(id=current_user.id, data=user_dto.model_dump())
+        return updated_user
 
     @staticmethod
     async def get_or_404(id: int) -> Optional[schemas.User]:
@@ -27,7 +38,6 @@ class UserService(UtilsService):
 
         async with SqlAlchemyUnitOfWork() as uow:
             user = await uow.user.read(id=id)
-            uow.commit()
         if not user:
             raise NotFoundException(detail=f'User with id {id} not found!')
         return user
@@ -38,5 +48,3 @@ class UserService(UtilsService):
 
         async with SqlAlchemyUnitOfWork() as uow:
             return await uow.user.list(pagination=pagination)
-
-
