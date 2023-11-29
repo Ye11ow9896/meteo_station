@@ -15,28 +15,21 @@ user_router = APIRouter(prefix='/user', tags=['User'])
     description='Protected method.'
 )
 async def create_user(
-        user_dto: schemas.RequestCreateUpdateUser,
+        user_dto: schemas.RequestCreateUser,
         user_service: get_user_service(),
-        auth_service: get_auth_service()
 ) -> schemas.ResponseCreateUpdateUser:
-    await auth_service.check_access_or_raise_401()
-    return await user_service.create_user(user_dto=user_dto)
+    return await user_service.create(user_dto=user_dto)
 
 
-@user_router.patch(
-    path='/update/{id}',
+@user_router.get(
+    path='/read',
     status_code=status.HTTP_200_OK,
     response_model=schemas.ResponseCreateUpdateUser,
-    description='Protected method.'
+    description='Protected method'
 )
-async def update_user(
-        id: int,
-        user_dto: schemas.ResponseCreateUpdateUser,
-        user_service: get_user_service(),
-        auth_service: get_auth_service()
-) -> schemas.ResponseCreateUpdateUser:
-    authorized_user = await auth_service.check_access_or_raise_401()
-    return await user_service.update_user(user_dto=user_dto, current_user=authorized_user)
+async def read_user(user_service: get_user_service(), auth_service: get_auth_service()):
+    autorized_user = await auth_service.check_access_or_raise_401()
+    return user_service.get(id=autorized_user.id)
 
 
 @user_router.get(

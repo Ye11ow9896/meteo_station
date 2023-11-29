@@ -13,11 +13,16 @@ class User(BaseModel):
     password_hash: Optional[str] = None
 
 
-class RequestCreateUpdateUser(BaseModel):
+class RequestCreateUser(BaseModel):
     name: Optional[str] = None
     surname: Optional[str] = None
     login: str
     password_hash: str = Field(alias='password')
+
+
+class RequestUpdateUser(BaseModel):
+    name: Optional[str] = None
+    surname: Optional[str] = None
 
 
 class ResponseCreateUpdateUser(BaseModel):
