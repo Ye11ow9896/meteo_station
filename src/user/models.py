@@ -29,6 +29,7 @@ class User(Base):
             id=self.id,
             name=self.name,
             surname=self.surname,
+            login=self.login,
             create_date=self.create_date,
-            login=self.login
+            password_hash=self.password_hash,
         )

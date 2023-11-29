@@ -1,1 +1,8 @@
-Generic single-database configuration.
+## Создание файла миграции
+```commandline
+alembic revision --autogenerate -m "<commit_name>"
+```
+### Накатываение миграции
+Чтобы "накатить" созданную миграцию вводим команду и первые три символа хэша файла миграции:
+```commandline
+alembic upgrade 7f8

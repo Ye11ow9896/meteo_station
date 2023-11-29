@@ -1,7 +1,7 @@
 from typing import Optional
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import exists
 from src.base.repository import SqlRepository
 from src.user import schemas
 from src.user.models import User
@@ -14,8 +14,6 @@ class UserRepository(SqlRepository[User]):
 
     async def get_by_login_or_none(self, login) -> Optional[schemas.User]:
         result = await self._session.scalar(
-            exists().
-            where(User.login == login).
-            select()
+            select(User).where(User.login == login)
         )
-        return result.get_table_fields() if result else None
+        return None if not result else result.get_table_fields()

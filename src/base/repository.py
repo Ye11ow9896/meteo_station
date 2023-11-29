@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar, Type, Optional
 
-from sqlalchemy import select, update, insert, delete, exists
+from sqlalchemy import select, update, insert, delete, exists, asc, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.base.exceptions import UnprocessableEntityException
 from src.base.schemas import Pagination
 from src.base.models import Base
 
@@ -72,9 +73,20 @@ class SqlRepository(AbstractRepository[T]):
         return None if result is None else result.get_table_fields()
 
     async def list(self, pagination: Pagination) -> list[Type[T]]:
+        sort_direction = asc if pagination.direction == 'asc' else desc
+
+        try:
+            field = getattr(self.__model, pagination.sortBy)
+        except AttributeError:
+            raise UnprocessableEntityException(
+                detail=f'Sorting error! The {pagination.sortBy} '
+                       f'field does not exist in the {self.__model.__name__} model! '
+            )
+
         result = await self.__session.scalars(
             select(self.__model).
             limit(pagination.limit).
-            offset(pagination.offset)
+            offset(pagination.offset).
+            order_by(sort_direction(field))
         )
         return [row.get_table_fields() for row in result]

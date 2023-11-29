@@ -1,7 +1,7 @@
+from datetime import timedelta
+
 from dotenv import load_dotenv
 import os
-
-from pydantic import BaseModel, Field
 
 load_dotenv()
 
@@ -15,9 +15,11 @@ APP_ASYNC_DRIVER = os.environ.get('APP_ASYNC_DRIVER')
 ALEMBIC_SYNC_DRIVER = os.environ.get('ALEMBIC_SYNC_DRIVER')
 
 # Auth variable
-SALT = os.environ.get('SALT')
+JWT_CRYPT_ALGORITHM = os.environ.get('JWT_CRYPT_ALGORITHM')
 TOKEN_SECRET_KEY = os.environ.get('TOKEN_SECRET_KEY')
-AUTH_TOKEN_EXPIRE_TIME = os.environ.get('AUTH_TOKEN_EXPIRE_TIME')
+ACCESS_TOKEN_EXPIRE = timedelta(minutes=15)
+REFRESH_TOKEN_EXPIRE = timedelta(days=30)
+SALT = os.environ.get('SALT')
 
 # API tokens variable
 YANDEX_WEATHER_API_TOKEN = os.environ.get('YANDEX_WEATHER_API_TOKEN')
