@@ -1,5 +1,6 @@
 from typing import Optional
 
+from src.base.schemas import Pagination
 from src.base.uow import SqlAlchemyUnitOfWork
 from src.base.exceptions import NotFoundException, AlreadyExistsException
 from src.base.utils import UtilsService
@@ -32,10 +33,10 @@ class UserService(UtilsService):
         return user
 
     @staticmethod
-    async def get_list() -> list[schemas.ResponseCreateUpdateUser]:
+    async def get_list(pagination: Pagination) -> list[schemas.ResponseCreateUpdateUser]:
         """Method return list of all users"""
 
         async with SqlAlchemyUnitOfWork() as uow:
-            return await uow.user.list()
+            return await uow.user.list(pagination=pagination)
 
 

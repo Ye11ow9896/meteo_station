@@ -23,3 +23,14 @@ class AlreadyExistsException(HTTPException):
         super().__init__(
             status.HTTP_409_CONFLICT, detail=detail, headers=headers
         )
+
+
+class UnprocessableEntityException(HTTPException):
+    def __init__(
+        self,
+        detail: str = "Unprocessable Entity!",
+        headers: dict[str, Any] | None = None,
+    ) -> None:
+        super().__init__(
+            status.HTTP_422_UNPROCESSABLE_ENTITY, detail=detail, headers=headers
+        )

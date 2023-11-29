@@ -1,15 +1,26 @@
-from starlette.responses import JSONResponse
+from starlette.responses import Response
 
 from src.auth import schemas
 from src.auth.exceptions import BadLoginExceptions, BadPasswordException
-from src.auth.jwt import JWT
+from src.auth.jwt import AuthJWT
+from src.base.exceptions import NotFoundException
 from src.base.uow import SqlAlchemyUnitOfWork
 from src.base.utils import UtilsService
 
 
-class AuthService(UtilsService):
+class AuthService(UtilsService, AuthJWT):
 
-    async def login_or_409(self, credentials_dto: schemas.LoginCredentials):
+    async def check_access_to_endpoint(self):
+        """The method protects access to the endpoint. It checks whether there is access to it else return user"""
+
+        login = self._get_login_from_access_token_or_401()
+        async with SqlAlchemyUnitOfWork() as uow:
+            user = await uow.user.get_by_login_or_none(login=login)
+        if not user:
+            raise NotFoundException(detail=f'User with login {login} not found!')
+        return user
+
+    async def login_or_409(self, credentials_dto: schemas.LoginCredentials) -> set[Response]:
         """Method login user or raise 409 error"""
 
         async with SqlAlchemyUnitOfWork() as uow:
@@ -18,22 +29,21 @@ class AuthService(UtilsService):
             raise BadLoginExceptions
         if not self._is_verified_password(password=credentials_dto.password, password_hash=user.password_hash):
             raise BadPasswordException
-        tok = self.set_access_cookie(login=user.login)
-        return tok
 
-    def set_access_cookie(self, login: str) -> str:
-        access_token = JWT.set_access_cookie(login=login)
-        response = JSONResponse(content={'message': 'Create a new cookie!'})
-        response.set_cookie(key="fakesession", value=access_token)
-        return response
+        return {
+            self._set_access_cookie(login=user.login),
+            self._set_refresh_cookie(login=user.login)
+        }
 
-    def set_refresh_cookie(self, refresh_cookie: str) -> str:
-        ...
+    def refresh(self):
+        """Method is refreshing access token and wrapped it to cookie if refresh token is not expired"""
 
-    @staticmethod
-    def create_access_token(login: str) -> str:
-        return JWT.create_access_token(login=login)
+        login = self._get_login_from_refresh_token_or_401()
+        return self._set_access_cookie(login=login)
 
-    @staticmethod
-    def create_refresh_token(self, login: str) -> str:
-        return JWT.create_refresh_token(login=login)
+    def logout(self):
+        """Method is deleting all cookies."""
+
+        self._delete_cookies()
+
+
