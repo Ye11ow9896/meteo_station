@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar, Type, Optional
 
-from sqlalchemy import select, update, insert, delete, exists, asc, desc
+from sqlalchemy import select, insert, exists, asc, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.base.exceptions import UnprocessableEntityException
