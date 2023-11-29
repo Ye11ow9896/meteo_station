@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar, Type, Optional
 
-from sqlalchemy import select, insert, exists, asc, desc
+from sqlalchemy import select, insert, exists, asc, desc, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.base.exceptions import UnprocessableEntityException
@@ -17,7 +17,7 @@ class AbstractRepository(Generic[T], ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def read(self, id: int) -> T:
+    async def read_or_none(self, id: int) -> T:
         raise NotImplementedError()
 
     @abstractmethod
@@ -46,24 +46,22 @@ class SqlRepository(AbstractRepository[T]):
         )
         return None if result is None else result.get_table_fields()
 
-    async def read(self, id: int) -> Optional[T]:
+    async def read_or_none(self, id: int) -> Optional[Type[T]]:
         return await self.__session.scalar(
-            exists().
-            where(self.__model.id == id).
-            select()
+            select(self.__model).
+            where(self.__model.id == id)
         ) or None
 
-    async def update(self, id: int, data: dict) -> Optional[int]:
+    async def update(self, id: int, data: dict) -> Optional[Type[T]]:
         result = await self.__session.scalar(
-            exists().
-            where(self.__model.id == id).
             update(self.__model).
+            where(self.__model.id == id).
             values(**data).
             returning(self.__model)
         )
         return None if result is None else result.get_table_fields()
 
-    async def delete(self, id: int) -> int:
+    async def delete(self, id: int) -> Optional[Type[T]]:
         result = await self.__session.scalar(
             exists().
             where(self.__model.id == id).

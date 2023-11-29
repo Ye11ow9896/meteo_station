@@ -35,5 +35,5 @@ async def read_items(
 async def logout(
         auth_service: get_auth_service(),
 ):
-    await auth_service.check_access_to_endpoint()
+    await auth_service.check_access_or_raise_401()
     return auth_service.logout()

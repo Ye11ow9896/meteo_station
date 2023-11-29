@@ -1,10 +1,7 @@
-from typing import Annotated
-
-from fastapi import APIRouter, status, Depends, Path
+from fastapi import APIRouter, status
 
 from src.auth.dependencies import get_auth_service
 from src.base.dependencies import set_pagination_to_query_path
-from src.base.schemas import Pagination
 from src.user import schemas
 from src.user.dependencies import get_user_service
 
@@ -18,12 +15,21 @@ user_router = APIRouter(prefix='/user', tags=['User'])
     description='Protected method.'
 )
 async def create_user(
-        user_dto: schemas.RequestCreateUpdateUser,
+        user_dto: schemas.RequestCreateUser,
         user_service: get_user_service(),
-        auth_service: get_auth_service()
 ) -> schemas.ResponseCreateUpdateUser:
-    await auth_service.check_access_to_endpoint()
-    return await user_service.create_user(user_dto=user_dto)
+    return await user_service.create(user_dto=user_dto)
+
+
+@user_router.get(
+    path='/read',
+    status_code=status.HTTP_200_OK,
+    response_model=schemas.ResponseCreateUpdateUser,
+    description='Protected method'
+)
+async def read_user(user_service: get_user_service(), auth_service: get_auth_service()):
+    autorized_user = await auth_service.check_access_or_raise_401()
+    return user_service.get(id=autorized_user.id)
 
 
 @user_router.get(
@@ -37,5 +43,5 @@ async def get_user_list(
         auth_service: get_auth_service(),
         pagination: set_pagination_to_query_path(),
 ) -> list[schemas.ResponseCreateUpdateUser]:
-    await auth_service.check_access_to_endpoint()
+    await auth_service.check_access_or_raise_401()
     return await user_service.get_list(pagination=pagination)
