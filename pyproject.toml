@@ -16,13 +16,16 @@ sqlalchemy = "^2.0.23"
 alembic = "^1.12.1"
 psycopg2-binary = "^2.9.9"
 python-jose = "^3.3.0"
-pytest = "^7.4.3"
+pytest-asyncio = "^0.21.1"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.pytest]
-pythontath = "src ."
+[tool.pytest.ini_options]
+testpaths = "./tests"
+python_files = "test_*.py"
+asyncio_mode = "auto"
+pythonpath = "."
 
