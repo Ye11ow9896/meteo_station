@@ -1,10 +1,13 @@
-from typing import Optional, Annotated, Any
+from typing import Optional, Annotated, Any, TYPE_CHECKING
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.base.models import Base
 from src.meteo_station import schemas
+
+if TYPE_CHECKING:
+    from src.user.models import User
 
 str50 = Annotated[str, 50]
 str255 = Annotated[str, 255]
@@ -45,6 +48,8 @@ class MeteoStation(Base):
     video_server_snapshot_path: Mapped[str]
     os_login: Mapped[str50]
     os_password_hash: Mapped[str50]
+
+    user: Mapped["User"] = relationship("User", back_populates="meteo_station")
 
     def get_table_fields(self) -> schemas.MeteoStation:
         return schemas.MeteoStation(

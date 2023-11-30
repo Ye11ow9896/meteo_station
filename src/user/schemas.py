@@ -3,6 +3,8 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from src.meteo_station.schemas import MeteoStation
+
 
 class User(BaseModel):
     id: Optional[int] = None
@@ -11,6 +13,7 @@ class User(BaseModel):
     login: Optional[str] = None
     create_date: Optional[datetime] = None
     password_hash: Optional[str] = None
+    meteo_station: Optional[list[MeteoStation]] = None
 
 
 class RequestCreateUser(BaseModel):
@@ -31,3 +34,7 @@ class ResponseCreateUpdateUser(BaseModel):
     surname: Optional[str] = None
     login: str
     create_date: datetime
+
+
+class ResponseCurrentUser(ResponseCreateUpdateUser):
+    meteo_station: Optional[list[MeteoStation]] = None

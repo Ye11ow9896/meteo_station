@@ -22,14 +22,14 @@ async def create_user(
 
 
 @user_router.get(
-    path='/read',
+    path='/current/features',
     status_code=status.HTTP_200_OK,
-    response_model=schemas.ResponseCreateUpdateUser,
+    response_model=schemas.ResponseCurrentUser,
     description='Protected method'
 )
 async def read_user(user_service: get_user_service(), auth_service: get_auth_service()):
-    autorized_user = await auth_service.check_access_or_raise_401()
-    return user_service.get(id=autorized_user.id)
+    authorized_user = await auth_service.check_access_or_raise_401()
+    return await user_service.get(id=authorized_user.id)
 
 
 @user_router.get(

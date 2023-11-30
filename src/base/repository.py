@@ -47,10 +47,11 @@ class SqlRepository(AbstractRepository[T]):
         return None if result is None else result.get_table_fields()
 
     async def read_or_none(self, id: int) -> Optional[Type[T]]:
-        return await self.__session.scalar(
+        result = await self.__session.scalar(
             select(self.__model).
             where(self.__model.id == id)
-        ) or None
+        )
+        return None if not result else result.get_table_fields()
 
     async def update(self, id: int, data: dict) -> Optional[Type[T]]:
         result = await self.__session.scalar(

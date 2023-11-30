@@ -1,11 +1,12 @@
 from datetime import datetime
-from typing import Optional, Annotated, Any, List
+from typing import Optional, Annotated, Any, List, TYPE_CHECKING
 
 from sqlalchemy import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.base.models import Base
 from src.user import schemas
+
 from src.meteo_station.models import MeteoStation
 
 str50 = Annotated[str, 50]
@@ -24,7 +25,7 @@ class User(Base):
     create_date: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now())
     password_hash: Mapped[str50] = mapped_column(nullable=False)
 
-    meteo_station: Mapped[List["MeteoStation"]] = relationship(back_populates="user")
+    meteo_station: Mapped[List[Optional["MeteoStation"]]] = relationship("MeteoStation", back_populates="user")
 
     def get_table_fields(self) -> schemas.User:
         return schemas.User(
