@@ -5,7 +5,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.base.models import Base
 from src.meteo_station import schemas
-from src.user.models import User
 
 str50 = Annotated[str, 50]
 str255 = Annotated[str, 255]
@@ -34,7 +33,7 @@ class MeteoStation(Base):
     def __init__(self, **kw: Any):
         super().__init__(**kw)
 
-    id_user: Mapped = mapped_column(ForeignKey('users.id'), nullable=False)
+    id_user: Mapped[id] = mapped_column(ForeignKey('user.id'), nullable=False)
     name: Mapped[Optional[str50]] = mapped_column(unique=True, nullable=False)
     lat: Mapped[float] = mapped_column(nullable=False)
     lon: Mapped[float] = mapped_column(nullable=False)
@@ -46,8 +45,6 @@ class MeteoStation(Base):
     video_server_snapshot_path: Mapped[str]
     os_login: Mapped[str50]
     os_password_hash: Mapped[str50]
-
-    user: Mapped["User"] = relationship(back_populates="meteo_station")
 
     def get_table_fields(self) -> schemas.MeteoStation:
         return schemas.MeteoStation(
