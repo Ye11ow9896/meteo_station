@@ -3,7 +3,18 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from src.meteo_station.schemas import MeteoStation
+
+class MeteoStationsInUser(BaseModel):
+    id: int
+    name: str
+    lat: float
+    lon: float
+    has_video_server: bool
+    video_server_ip: Optional[str] = None
+    video_server_port: Optional[str] = None
+    video_server_stream_path: Optional[str] = None
+    has_timelapse: bool
+    video_server_snapshot_path: Optional[str] = None
 
 
 class User(BaseModel):
@@ -13,7 +24,7 @@ class User(BaseModel):
     login: Optional[str] = None
     create_date: Optional[datetime] = None
     password_hash: Optional[str] = None
-    meteo_station: Optional[list[MeteoStation]] = None
+    meteo_station: Optional[list[MeteoStationsInUser]] = None
 
 
 class RequestCreateUser(BaseModel):
@@ -37,4 +48,4 @@ class ResponseCreateUpdateUser(BaseModel):
 
 
 class ResponseCurrentUser(ResponseCreateUpdateUser):
-    meteo_station: Optional[list[MeteoStation]] = None
+    meteo_station: Optional[list[MeteoStationsInUser]] = None

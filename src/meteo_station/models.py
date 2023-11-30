@@ -19,7 +19,7 @@ class MeteoStation(Base):
     __tablename__ = 'meteo_station'
     __repr_fields__ = (
         'id',
-        'id_user',
+        'user_id',
         'name',
         'lat',
         'lon',
@@ -36,7 +36,7 @@ class MeteoStation(Base):
     def __init__(self, **kw: Any):
         super().__init__(**kw)
 
-    id_user: Mapped[id] = mapped_column(ForeignKey('user.id'), nullable=False)
+    user_id: Mapped[id] = mapped_column(ForeignKey('user.id'), nullable=False)
     name: Mapped[Optional[str50]] = mapped_column(unique=True, nullable=False)
     lat: Mapped[float] = mapped_column(nullable=False)
     lon: Mapped[float] = mapped_column(nullable=False)
