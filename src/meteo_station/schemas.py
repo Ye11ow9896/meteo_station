@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class UserInStation(BaseModel):
@@ -13,7 +13,7 @@ class UserInStation(BaseModel):
 
 class MeteoStation(BaseModel):
     id: int
-    id_user: int
+    user_id: int
     name: str
     lat: float
     lon: float
@@ -25,7 +25,8 @@ class MeteoStation(BaseModel):
     video_server_snapshot_path: Optional[str] = None
     os_login: Optional[str] = None
     os_password_hash: Optional[str] = None
-    user: UserInStation
+
+    user: Optional[UserInStation] = None
 
 
 class RequestCreateMeteoStation(BaseModel):
@@ -41,6 +42,8 @@ class RequestCreateMeteoStation(BaseModel):
     os_login: Optional[str] = None
     os_password_hash: Optional[str] = None
 
+    model_config = ConfigDict(extra='allow')
+
 
 class ResponseCreateMeteoStation(BaseModel):
     name: str
@@ -52,4 +55,7 @@ class ResponseCreateMeteoStation(BaseModel):
     video_server_stream_path: Optional[str] = None
     has_timelapse: bool
     video_server_snapshot_path: Optional[str] = None
+
+
+class ResponseGetMeteoStation(ResponseCreateMeteoStation):
     user: UserInStation

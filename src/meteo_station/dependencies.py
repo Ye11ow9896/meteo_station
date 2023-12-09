@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from src.user.service import MeteoStationService
+from src.meteo_station.service import MeteoStationService
 
 
 def get_meteo_station_service():

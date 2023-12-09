@@ -4,6 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from src.database import async_session
 from src.user.repository import UserRepository
+from src.meteo_station.repository import MeteoStationRepository
 
 
 class AbstractUnitOfWork(ABC):
@@ -44,6 +45,7 @@ class AbstractUnitOfWork(ABC):
 
 class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
     user: UserRepository
+    meteo_station: MeteoStationRepository
 
     async def commit(self):
         try:
@@ -61,6 +63,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         if not self._session.in_transaction():
             self._transaction = self._session.begin()
             self.user: UserRepository = UserRepository(self._session)
+            self.meteo_station: MeteoStationRepository = MeteoStationRepository(self._session)
 
     async def _close_transaction(self) -> None:
         await self._session.close()

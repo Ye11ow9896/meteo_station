@@ -22,8 +22,9 @@ async_session = sessionmaker(
 )
 
 
-async def ping_postgres_database():
+async def ping_postgres_database() -> bool:
     """Ping database"""
+
     try:
         connection = await connect(
             database=PG_DB_NAME,
@@ -33,7 +34,8 @@ async def ping_postgres_database():
             port=PG_PORT,
         )
         await connection.close()
-    except ConnectionRefusedError as e:
-        raise ConnectionRefusedError(
-            'Connect to database error!'
-        ) from e
+        print('Connection successfully!!')
+        return True
+    except ConnectionRefusedError:
+        print('Not connection!')
+        return False

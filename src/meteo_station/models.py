@@ -54,7 +54,7 @@ class MeteoStation(Base):
     def get_table_fields(self) -> schemas.MeteoStation:
         return schemas.MeteoStation(
             id=self.id,
-            id_user=self.id_user,
+            user_id=self.user_id,
             name=self.name,
             lat=self.lat,
             lon=self.lon,
