@@ -2,7 +2,7 @@
 name = "meteo-station"
 version = "0.1.0"
 description = ""
-authors = ["Aleksey Kondratenko <kond@omegafuture.ru>"]
+authors = ["Aleksey Kondratenko <kondratenkoalex1994@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -17,6 +17,7 @@ alembic = "^1.12.1"
 psycopg2-binary = "^2.9.9"
 python-jose = "^3.3.0"
 pytest-asyncio = "^0.21.1"
+bandit = "^1.7.5"
 
 
 [build-system]
